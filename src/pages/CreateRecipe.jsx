@@ -1,11 +1,14 @@
 import { nanoid } from "nanoid"
-import React, { useContext } from "react"
+import React, { use, useContext } from "react"
 import { useForm, useFieldArray } from "react-hook-form"
 import { recipe } from "../context/RecipeContext"
+import { toast } from "react-toastify"
+import { useNavigate } from "react-router-dom"
 
 const CreateRecipe = () => {
 
   const {data, setData} = useContext(recipe)
+  const navigate = useNavigate();
     
   const {
     register,
@@ -63,6 +66,9 @@ const onSubmit = async (formData) => {
   };
 
   setData(prev => [...prev, newRecipe]);
+
+  toast.success("New recipe create successfully!");
+  navigate("/recipes");
 
   reset();
 };

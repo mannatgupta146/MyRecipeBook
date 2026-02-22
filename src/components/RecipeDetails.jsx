@@ -1,36 +1,35 @@
-import React, { useContext, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { recipe } from "../context/RecipeContext";
+import React, { useContext, useState } from "react"
+import { useParams, useNavigate } from "react-router-dom"
+import { recipe } from "../context/RecipeContext"
+import { toast } from "react-toastify"
 
 const RecipeDetails = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const { data } = useContext(recipe);
-  const [copied, setCopied] = useState(false);
-  const [checkedItems, setCheckedItems] = useState({});
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const { data } = useContext(recipe)
+  const [copied, setCopied] = useState(false)
+  const [checkedItems, setCheckedItems] = useState({})
 
-  const recipeItem = data.find((r) => r.id === id);
+  const recipeItem = data.find((r) => r.id === id)
 
   const toggleIngredient = (index) => {
-    setCheckedItems((prev) => ({ ...prev, [index]: !prev[index] }));
-  };
+    setCheckedItems((prev) => ({ ...prev, [index]: !prev[index] }))
+  }
 
   const handleShare = async () => {
-    const shareData = {
-      title: recipeItem.title,
-      text: `You have to try this: ${recipeItem.title}`,
-      url: window.location.href,
-    };
     try {
       if (navigator.share) {
-        await navigator.share(shareData);
+        await navigator.share({
+          title: recipeItem.title,
+          text: "Check out this recipe!",
+          url: window.location.href,
+        })
       } else {
-        await navigator.clipboard.writeText(window.location.href);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+        await navigator.clipboard.writeText(window.location.href)
+        toast.success("Link copied!")
       }
     } catch {}
-  };
+  }
 
   if (!recipeItem)
     return (
@@ -46,15 +45,14 @@ const RecipeDetails = () => {
           Go back home
         </button>
       </div>
-    );
+    )
 
   return (
     <div className="max-w-6xl mx-auto px-4 pb-20">
-
       {/* TOP BAR */}
       <div className="flex justify-between items-center mb-8">
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => navigate("/recipes")}
           className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-gray-100 text-sm font-semibold text-gray-600 shadow-sm hover:shadow-md hover:text-emerald-600 transition active:scale-95"
         >
           ← Back
@@ -72,14 +70,19 @@ const RecipeDetails = () => {
           >
             🔗
           </button>
+
+          <button
+            onClick={() => navigate(`/edit/${recipeItem.id}`)}
+            className="px-4 py-2 rounded-xl bg-emerald-500 text-white text-sm font-semibold hover:bg-emerald-600 transition"
+          >
+            Edit
+          </button>
         </div>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-10 items-start">
-
         {/* LEFT */}
         <div className="lg:sticky lg:top-24 space-y-6">
-
           <div className="relative group rounded-3xl overflow-hidden shadow-xl border border-white">
             <img
               src={recipeItem.image}
@@ -109,7 +112,6 @@ const RecipeDetails = () => {
 
         {/* RIGHT */}
         <div className="space-y-8">
-
           {/* INGREDIENTS */}
           <section className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
             <h2 className="text-xl font-bold text-gray-900 mb-6">
@@ -138,10 +140,10 @@ const RecipeDetails = () => {
                   >
                     ✓
                   </div>
-                  <span
-                    className={`text-sm font-medium ${
+                  <span 
+                    className={`text-sm font-medium leading-tight align-middle ${
                       checkedItems[i]
-                        ? "line-through text-gray-400"
+                        ? "line-through decoration-2 decoration-emerald-500 text-gray-400"
                         : "text-gray-700"
                     }`}
                   >
@@ -154,9 +156,7 @@ const RecipeDetails = () => {
 
           {/* INSTRUCTIONS */}
           <section className="space-y-6">
-            <h2 className="text-xl font-bold text-gray-900">
-              Preparation
-            </h2>
+            <h2 className="text-xl font-bold text-gray-900">Preparation</h2>
 
             <div className="space-y-6">
               {(Array.isArray(recipeItem.instructions)
@@ -186,10 +186,9 @@ const RecipeDetails = () => {
             </p>
           </div>
         </div>
-
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default RecipeDetails;
+export default RecipeDetails

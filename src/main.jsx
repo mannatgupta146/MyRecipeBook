@@ -11,7 +11,7 @@ createRoot(document.getElementById("root")).render(
     <RecipeContext>
       <BrowserRouter>
         <App />
-        <ToastContainer />
+        <ToastContainer position="top-center" autoClose={2000} />
       </BrowserRouter>
     </RecipeContext>
   </StrictMode>,
