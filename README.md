@@ -57,14 +57,6 @@ Search recipes by:
 
 ---
 
-## 🧠 Powered By
-
-- **Spoonacular API** — recipe data
-- **Local Storage** — data persistence
-- **React Context API** — state management
-
----
-
 ## 🛠 Tech Stack
 
 - React.js
@@ -123,17 +115,6 @@ This project demonstrates:
 * Modern UI/UX design
 * Real-world state management
 * Search & filtering systems
-
----
-
-## 🚀 Future Improvements
-
-* Dark mode support
-* Meal planning calendar
-* Nutrition info
-* Recipe sharing & export
-* User authentication
-* Drag & drop ingredient ordering
 
 ---
 
