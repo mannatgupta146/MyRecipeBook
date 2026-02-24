@@ -2,83 +2,71 @@ import React, { useContext, useEffect, useState, useRef } from "react"
 import { recipe } from "../context/RecipeContext"
 import RecipeCard from "../components/RecipeCard"
 import api from "../utils/api"
-const API_KEY = import.meta.env.VITE_SPOONACULAR_KEY;
+const API_KEY = import.meta.env.VITE_SPOONACULAR_KEY
 
 const Recipes = () => {
   const { data, setData } = useContext(recipe)
   const [loading, setLoading] = useState(true)
   const loadedOnce = useRef(false)
 
-useEffect(() => {
-  const loadRecipes = async () => {
-    const apiLoaded = localStorage.getItem("apiLoaded");
+  useEffect(() => {
+    const loadRecipes = async () => {
+      const apiLoaded = localStorage.getItem("apiLoaded")
 
-    if (data.length > 0 || apiLoaded) {
-      setLoading(false);
-      return;
-    }
+      if (data.length > 0 || apiLoaded) {
+        setLoading(false)
+        return
+      }
 
-    try {
-const res = await api.get(
-  `/recipes/random?number=12&apiKey=${API_KEY}`
-);
+      try {
+        const res = await api.get(`/recipes/random?number=12&apiKey=${API_KEY}`)
 
-      const formatted = res.data.recipes.map((item) => ({
-        id: item.id.toString(),
-        title: item.title,
-        chef: item.sourceName || "Community Chef",
-        category: item.dishTypes?.[0] || "Recipe",
-        image: item.image,
-        description: item.summary
-          .replace(/<[^>]+>/g, "")
-          .slice(0, 120),
-        ingredients: item.extendedIngredients.map(
-          (ing) => ing.original
-        ),
-        instructions:
-          item.analyzedInstructions[0]?.steps.map(
-            (s) => s.step
+        const formatted = res.data.recipes.map((item) => ({
+          id: item.id.toString(),
+          title: item.title,
+          chef: item.sourceName || "Community Chef",
+          category: item.dishTypes?.[0] || "Recipe",
+          image: item.image,
+          description: item.summary.replace(/<[^>]+>/g, "").slice(0, 120),
+          ingredients: item.extendedIngredients.map((ing) => ing.original),
+          instructions: item.analyzedInstructions[0]?.steps.map(
+            (s) => s.step,
           ) || ["Follow standard preparation steps"],
-      }));
+        }))
 
-      setData(formatted);
-      localStorage.setItem("apiLoaded", "true");
-    } catch (err) {
-      console.log(err);
+        setData(formatted)
+        localStorage.setItem("apiLoaded", "true")
+      } catch (err) {
+        console.log(err)
+      }
+
+      setLoading(false)
     }
 
-    setLoading(false);
-  };
+    loadRecipes()
+  }, [])
 
-  loadRecipes();
-}, []);
+  const restoreRecipes = async () => {
+    setLoading(true)
 
-const restoreRecipes = async () => {
-  setLoading(true);
+    const res = await api.get(`/recipes/random?number=12&apiKey=${API_KEY}`)
 
-  const res = await api.get(
-    `/recipes/random?number=12&apiKey=YOUR_API_KEY`
-  );
+    const formatted = res.data.recipes.map((item) => ({
+      id: item.id.toString(),
+      title: item.title,
+      chef: item.sourceName || "Community Chef",
+      category: item.dishTypes?.[0] || "Recipe",
+      image: item.image,
+      description: item.summary.replace(/<[^>]+>/g, "").slice(0, 120),
+      ingredients: item.extendedIngredients.map((ing) => ing.original),
+      instructions: item.analyzedInstructions[0]?.steps.map((s) => s.step) || [
+        "Follow standard preparation steps",
+      ],
+    }))
 
-  const formatted = res.data.recipes.map((item) => ({
-    id: item.id.toString(),
-    title: item.title,
-    chef: item.sourceName || "Community Chef",
-    category: item.dishTypes?.[0] || "Recipe",
-    image: item.image,
-    description: item.summary.replace(/<[^>]+>/g, "").slice(0, 120),
-    ingredients: item.extendedIngredients.map(
-      (ing) => ing.original
-    ),
-    instructions:
-      item.analyzedInstructions[0]?.steps.map(
-        (s) => s.step
-      ) || ["Follow standard preparation steps"],
-  }));
-
-  setData(formatted);
-  setLoading(false);
-};
+    setData(formatted)
+    setLoading(false)
+  }
 
   return (
     <div className="max-w-6xl mx-auto px-4">

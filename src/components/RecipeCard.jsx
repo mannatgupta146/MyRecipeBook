@@ -39,8 +39,18 @@ const RecipeCard = ({ item }) => {
         <img
           src={item.image}
           alt={item.title}
-          className="absolute inset-0 w-full h-full object-cover object-center transition duration-500 group-hover:scale-105"
+          loading="lazy"
+          className="w-full h-full object-cover object-center
+               transition duration-500 group-hover:scale-105"
         />
+        {/* CATEGORY BADGE */}
+        <span
+          className="absolute top-3 left-3 bg-white/90 backdrop-blur px-2.5 py-1
+                   text-[10px] font-semibold rounded-full
+                   text-emerald-700 shadow-sm"
+        >
+          {item.category}
+        </span>
       </div>
 
       {/* CONTENT */}
