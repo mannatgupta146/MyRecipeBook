@@ -27,7 +27,13 @@ const Recipes = () => {
           chef: item.sourceName || "Community Chef",
           category: item.dishTypes?.[0] || "Recipe",
           image: item.image,
-          description: item.summary.replace(/<[^>]+>/g, "").slice(0, 120),
+          description:
+            item.summary
+              .replace(/<[^>]+>/g, "") // remove HTML
+              .replace(/\s+/g, " ") // normalize spaces
+              .trim()
+              .match(/^.{1,140}(\.|!|\?)/)?.[0] ||
+            item.summary.replace(/<[^>]+>/g, "").slice(0, 140) + "...",
           ingredients: item.extendedIngredients.map((ing) => ing.original),
           instructions: item.analyzedInstructions[0]?.steps.map(
             (s) => s.step,
@@ -57,7 +63,13 @@ const Recipes = () => {
       chef: item.sourceName || "Community Chef",
       category: item.dishTypes?.[0] || "Recipe",
       image: item.image,
-      description: item.summary.replace(/<[^>]+>/g, "").slice(0, 120),
+      description:
+        item.summary
+          .replace(/<[^>]+>/g, "") // remove HTML
+          .replace(/\s+/g, " ") // normalize spaces
+          .trim()
+          .match(/^.{1,140}(\.|!|\?)/)?.[0] ||
+        item.summary.replace(/<[^>]+>/g, "").slice(0, 140) + "...",
       ingredients: item.extendedIngredients.map((ing) => ing.original),
       instructions: item.analyzedInstructions[0]?.steps.map((s) => s.step) || [
         "Follow standard preparation steps",

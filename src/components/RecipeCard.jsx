@@ -1,23 +1,39 @@
-import React, { useContext } from "react"
-import { useNavigate } from "react-router-dom"
-import { recipe } from "../context/RecipeContext"
-import { toast } from "react-toastify"
+import React, { useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { recipe } from "../context/RecipeContext";
+import { toast } from "react-toastify";
 
 const RecipeCard = ({ item }) => {
-  const navigate = useNavigate()
-  const { data, setData } = useContext(recipe)
+  const navigate = useNavigate();
+  const { data, setData, favorites, setFavorites } = useContext(recipe);
+
+  const isFav = favorites.includes(item.id);
+
+  const toggleFavorite = (e) => {
+    e.stopPropagation();
+
+    if (isFav) {
+      setFavorites(favorites.filter(id => id !== item.id));
+      toast.info("Removed from favorites");
+    } else {
+      setFavorites([...favorites, item.id]);
+      toast.success("Added to favorites ❤️");
+    }
+  };
 
   const handleDelete = (e) => {
-    e.stopPropagation()
+    e.stopPropagation();
 
-    const confirmDelete = window.confirm("Delete this recipe permanently?")
-    if (!confirmDelete) return
+    if (!window.confirm("Delete this recipe permanently?")) return;
 
-    const updated = data.filter((r) => r.id !== item.id)
-    setData(updated)
+    const updated = data.filter((r) => r.id !== item.id);
+    setData(updated);
 
-    toast.success("Recipe deleted 🗑")
-  }
+    // ❗ remove from favorites if deleted
+    setFavorites(favorites.filter(id => id !== item.id));
+
+    toast.success("Recipe deleted 🗑");
+  };
 
   return (
     <div
@@ -25,6 +41,16 @@ const RecipeCard = ({ item }) => {
       className="group cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden
                  hover:shadow-md hover:-translate-y-1 transition duration-300 relative"
     >
+
+      {/* ❤️ FAVORITE */}
+      <button
+        onClick={toggleFavorite}
+        className="absolute top-3 left-3 z-10 bg-white/90 p-1.5 rounded-full shadow
+                   hover:scale-110 transition"
+      >
+        {isFav ? "❤️" : "🤍"}
+      </button>
+
       {/* DELETE */}
       <button
         onClick={handleDelete}
@@ -40,15 +66,9 @@ const RecipeCard = ({ item }) => {
           src={item.image}
           alt={item.title}
           loading="lazy"
-          className="w-full h-full object-cover object-center
-               transition duration-500 group-hover:scale-105"
+          className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
         />
-        {/* CATEGORY BADGE */}
-        <span
-          className="absolute top-3 left-3 bg-white/90 backdrop-blur px-2.5 py-1
-                   text-[10px] font-semibold rounded-full
-                   text-emerald-700 shadow-sm"
-        >
+        <span className="absolute bottom-3 left-3 bg-white/90 px-2 py-1 text-[10px] font-semibold rounded-full text-emerald-700 shadow-sm">
           {item.category}
         </span>
       </div>
@@ -62,7 +82,7 @@ const RecipeCard = ({ item }) => {
         <p className="text-sm text-gray-600 line-clamp-2">{item.description}</p>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default RecipeCard
+export default RecipeCard;
