@@ -1,25 +1,23 @@
-import React, { useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { recipe } from "../context/RecipeContext";
-import { toast } from "react-toastify";
+import React, { useContext } from "react"
+import { useNavigate } from "react-router-dom"
+import { recipe } from "../context/RecipeContext"
+import { toast } from "react-toastify"
 
 const RecipeCard = ({ item }) => {
-  const navigate = useNavigate();
-  const { data, setData } = useContext(recipe);
+  const navigate = useNavigate()
+  const { data, setData } = useContext(recipe)
 
   const handleDelete = (e) => {
-    e.stopPropagation();
+    e.stopPropagation()
 
-    const confirmDelete = window.confirm(
-      "Delete this recipe permanently?"
-    );
-    if (!confirmDelete) return;
+    const confirmDelete = window.confirm("Delete this recipe permanently?")
+    if (!confirmDelete) return
 
-    const updated = data.filter((r) => r.id !== item.id);
-    setData(updated);
+    const updated = data.filter((r) => r.id !== item.id)
+    setData(updated)
 
-    toast.success("Recipe deleted 🗑");
-  };
+    toast.success("Recipe deleted 🗑")
+  }
 
   return (
     <div
@@ -37,15 +35,12 @@ const RecipeCard = ({ item }) => {
       </button>
 
       {/* IMAGE */}
-      <div className="relative h-48 overflow-hidden">
+      <div className="relative aspect-5/4 overflow-hidden bg-gray-100">
         <img
           src={item.image}
           alt={item.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition"
+          className="absolute inset-0 w-full h-full object-cover object-center transition duration-500 group-hover:scale-105"
         />
-        <span className="absolute top-3 left-3 bg-white/90 px-2 py-1 text-[10px] font-semibold rounded-full text-emerald-700 shadow-sm">
-          {item.category}
-        </span>
       </div>
 
       {/* CONTENT */}
@@ -54,12 +49,10 @@ const RecipeCard = ({ item }) => {
         <p className="text-xs text-gray-500">
           by <span className="font-medium text-gray-700">{item.chef}</span>
         </p>
-        <p className="text-sm text-gray-600 line-clamp-2">
-          {item.description}
-        </p>
+        <p className="text-sm text-gray-600 line-clamp-2">{item.description}</p>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default RecipeCard;
+export default RecipeCard
