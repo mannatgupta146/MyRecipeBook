@@ -7,6 +7,7 @@ export default function Navbar() {
     { name: "About", path: "/about" },
     { name: "Recipes", path: "/recipes" },
     { name: "Create", path: "/create-recipe" },
+    { name: "Favourites", path: "/favourites" }
   ]
 
   return (
