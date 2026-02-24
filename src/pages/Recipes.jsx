@@ -8,6 +8,18 @@ const Recipes = () => {
   const { data, setData } = useContext(recipe)
   const [loading, setLoading] = useState(true)
   const loadedOnce = useRef(false)
+  const [search, setSearch] = useState("")
+
+  const filteredRecipes = [...data].filter((item) => {
+    const text = search.toLowerCase()
+
+    return (
+      item.title.toLowerCase().includes(text) ||
+      item.category.toLowerCase().includes(text) ||
+      item.chef.toLowerCase().includes(text) ||
+      item.ingredients.join(" ").toLowerCase().includes(text)
+    )
+  })
 
   useEffect(() => {
     const loadRecipes = async () => {
@@ -84,6 +96,24 @@ const Recipes = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-4">
+      {/* SEARCH BAR */}
+      <div className="max-w-xl mx-auto mb-10">
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Search recipes, categories, chefs..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full px-5 py-3 pl-12 rounded-xl border border-gray-200
+                 focus:ring-2 focus:ring-emerald-400/30 focus:border-emerald-400
+                 outline-none text-sm"
+          />
+
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+            🔍
+          </span>
+        </div>
+      </div>
       {/* HEADER */}
       <div className="text-center mb-10">
         <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
@@ -120,7 +150,7 @@ const Recipes = () => {
 
       {/* GRID */}
       <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        {[...data]
+        {filteredRecipes
           .sort((a, b) => (b.isUserCreated ? 1 : 0) - (a.isUserCreated ? 1 : 0))
           .map((item) => (
             <RecipeCard key={item.id} item={item} />
