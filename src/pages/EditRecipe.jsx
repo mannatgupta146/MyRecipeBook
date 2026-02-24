@@ -1,15 +1,18 @@
-import React, { useContext, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { recipe } from "../context/RecipeContext";
-import { useForm, useFieldArray } from "react-hook-form";
-import { toast } from "react-toastify";
+import React, { useContext, useEffect, useState } from "react"
+import { useParams, useNavigate } from "react-router-dom"
+import { recipe } from "../context/RecipeContext"
+import { useForm, useFieldArray } from "react-hook-form"
+import { toast } from "react-toastify"
 
 const EditRecipe = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const { data, setData } = useContext(recipe);
+  const [customCategory, setCustomCategory] = useState("")
+  const [selectedCategory, setSelectedCategory] = useState("")
 
-  const recipeItem = data.find((r) => r.id === id);
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const { data, setData } = useContext(recipe)
+
+  const recipeItem = data.find((r) => r.id === id)
 
   const { register, control, handleSubmit, reset } = useForm({
     defaultValues: {
@@ -21,41 +24,50 @@ const EditRecipe = () => {
       ingredients: [{ value: "" }],
       instructions: "",
     },
-  });
+  })
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: "ingredients",
-  });
+  })
 
   useEffect(() => {
     if (recipeItem) {
       reset({
         ...recipeItem,
         ingredients: recipeItem.ingredients.map((i) => ({ value: i })),
-      });
+      })
+
+      if (categories.includes(recipeItem.category)) {
+        setSelectedCategory(recipeItem.category)
+      } else {
+        setSelectedCategory("Other")
+        setCustomCategory(recipeItem.category)
+      }
     }
-  }, [recipeItem, reset]);
+  }, [recipeItem, reset])
 
   const onSubmit = (formData) => {
+    const finalCategory =
+      selectedCategory === "Other" ? customCategory : selectedCategory
+
     const updatedRecipe = {
       ...formData,
       id,
+      category: finalCategory,
       ingredients: formData.ingredients
         .map((i) => i.value.trim())
         .filter(Boolean),
-    };
+    }
 
-    const updatedData = data.map((r) =>
-      r.id === id ? updatedRecipe : r
-    );
+    const updatedData = data.map((r) => (r.id === id ? updatedRecipe : r))
 
-    setData(updatedData);
-    toast.success("Recipe updated successfully ✅");
-    navigate(`/recipe/details/${id}`);
-  };
+    setData(updatedData)
+    toast.success("Recipe updated successfully ✅")
+    navigate(`/recipe/details/${id}`)
+  }
 
-  if (!recipeItem) return null;
+  if (!recipeItem) return null
 
   const categories = [
     "Breakfast",
@@ -64,20 +76,17 @@ const EditRecipe = () => {
     "Dessert",
     "Snack",
     "Beverage",
-  ];
+  ]
 
   const inputStyle =
     "w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none transition " +
-    "focus:bg-white focus:ring-2 focus:ring-emerald-400/30 focus:border-emerald-400";
+    "focus:bg-white focus:ring-2 focus:ring-emerald-400/30 focus:border-emerald-400"
 
   return (
     <div className="max-w-4xl mx-auto pb-20 px-4">
-      
       {/* HEADER */}
       <div className="mb-10 text-center">
-        <h2 className="text-3xl font-bold text-gray-900">
-          Edit Your Recipe
-        </h2>
+        <h2 className="text-3xl font-bold text-gray-900">Edit Your Recipe</h2>
         <p className="text-gray-500 mt-1">
           Refine the flavors and make it even better.
         </p>
@@ -126,15 +135,28 @@ const EditRecipe = () => {
             <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
               Category
             </label>
+
             <select
-              {...register("category", { required: true })}
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
               className={`${inputStyle} mt-2 cursor-pointer`}
             >
               <option value="">Select</option>
               {categories.map((c) => (
                 <option key={c}>{c}</option>
               ))}
+              <option value="Other">Other</option>
             </select>
+
+            {selectedCategory === "Other" && (
+              <input
+                type="text"
+                placeholder="Enter custom category"
+                value={customCategory}
+                onChange={(e) => setCustomCategory(e.target.value)}
+                className={`${inputStyle} mt-2`}
+              />
+            )}
           </div>
         </div>
 
@@ -166,10 +188,7 @@ const EditRecipe = () => {
 
           <div className="space-y-2">
             {fields.map((field, index) => (
-              <div
-                key={field.id}
-                className="flex items-center gap-2 group"
-              >
+              <div key={field.id} className="flex items-center gap-2 group">
                 <input
                   {...register(`ingredients.${index}.value`, {
                     required: true,
@@ -224,7 +243,7 @@ const EditRecipe = () => {
         </div>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default EditRecipe;
+export default EditRecipe

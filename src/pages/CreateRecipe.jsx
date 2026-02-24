@@ -60,6 +60,7 @@ const onSubmit = async (formData) => {
   const newRecipe = {
     ...formData,
     id: nanoid(),
+    isUserCreated: true,
     ingredients: formData.ingredients
       .map(i => i.value.trim())
       .filter(Boolean),
@@ -218,7 +219,7 @@ const onSubmit = async (formData) => {
               <button
                 type="button"
                 onClick={() => append({ value: "" })}
-                className="bg-emerald-500 text-white px-3 py-1 rounded-full text-[10px] font-bold hover:bg-emerald-600 transition shadow-sm"
+                className="bg-emerald-500 text-white px-3 py-2 rounded-full text-[10px] font-bold hover:bg-emerald-600 transition shadow-sm"
               >
                 + ADD ITEM
               </button>
@@ -276,14 +277,14 @@ const onSubmit = async (formData) => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full h-16 bg-gray-900 text-white rounded-2xl font-bold text-lg
+            className="w-full h-16 bg-gray-900 text-white rounded-2xl font-bold text-xl
                        hover:bg-emerald-600 transition duration-300 transform
                        active:scale-[0.98] disabled:bg-gray-300 shadow-xl shadow-gray-200 flex items-center justify-center gap-3"
           >
             {isSubmitting ? (
               <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
             ) : (
-              "Publish Recipe"
+              "Create Recipe"
             )}
           </button>
         </div>

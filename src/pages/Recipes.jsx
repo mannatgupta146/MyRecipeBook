@@ -19,7 +19,7 @@ const Recipes = () => {
       }
 
       try {
-        const res = await api.get(`/recipes/random?number=12&apiKey=${API_KEY}`)
+        const res = await api.get(`/recipes/random?number=15&apiKey=${API_KEY}`)
 
         const formatted = res.data.recipes.map((item) => ({
           id: item.id.toString(),
@@ -27,6 +27,7 @@ const Recipes = () => {
           chef: item.sourceName || "Community Chef",
           category: item.dishTypes?.[0] || "Recipe",
           image: item.image,
+          isUserCreated: false,
           description:
             item.summary
               .replace(/<[^>]+>/g, "") // remove HTML
@@ -55,7 +56,7 @@ const Recipes = () => {
   const restoreRecipes = async () => {
     setLoading(true)
 
-    const res = await api.get(`/recipes/random?number=12&apiKey=${API_KEY}`)
+    const res = await api.get(`/recipes/random?number=15&apiKey=${API_KEY}`)
 
     const formatted = res.data.recipes.map((item) => ({
       id: item.id.toString(),
@@ -63,6 +64,7 @@ const Recipes = () => {
       chef: item.sourceName || "Community Chef",
       category: item.dishTypes?.[0] || "Recipe",
       image: item.image,
+      isUserCreated: false,
       description:
         item.summary
           .replace(/<[^>]+>/g, "") // remove HTML
@@ -118,9 +120,11 @@ const Recipes = () => {
 
       {/* GRID */}
       <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        {data.map((item) => (
-          <RecipeCard key={item.id} item={item} />
-        ))}
+        {[...data]
+          .sort((a, b) => (b.isUserCreated ? 1 : 0) - (a.isUserCreated ? 1 : 0))
+          .map((item) => (
+            <RecipeCard key={item.id} item={item} />
+          ))}
       </div>
     </div>
   )
